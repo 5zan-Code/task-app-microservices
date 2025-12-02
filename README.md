@@ -2,7 +2,6 @@
 
 A full-stack task management application migrated to a **Microservices Architecture** using **Docker** and **Kubernetes**.
 
-![Microservices Architecture](file:///home/f97aizan/.gemini/antigravity/brain/a0997e9d-f8aa-4fc5-bab9-204c4f22c325/microservices_architecture_diagram_1764697664465.png)
 
 ## Architecture Overview
 
