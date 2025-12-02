@@ -1,96 +1,74 @@
-# Quick Setup Guide
+# Setup Guide
 
-Follow these steps to run the app on localhost:
+## Option 1: Kubernetes Deployment (Recommended)
 
-## Step 1: Start MySQL Database
+This method deploys the application as a set of microservices.
 
-### Option A: Using Docker (Easiest)
+### Prerequisites
+- Docker
+- Kubernetes Cluster (Minikube, Kind, or Cloud)
+- `kubectl`
+- Nginx Ingress Controller (enabled on your cluster)
+
+### Steps
+
+1.  **Build Docker Images**
+    ```bash
+    # Build Backend
+    docker build -t taskapp-backend:latest ./backend
+
+    # Build Frontend
+    docker build -t taskapp-frontend:latest ./frontend
+    ```
+    *Note: If using Minikube/Kind, load the images into the cluster nodes.*
+
+2.  **Deploy to Kubernetes**
+    ```bash
+    kubectl apply -f k8s/
+    ```
+
+3.  **Verify Deployment**
+    ```bash
+    kubectl get pods
+    ```
+    Wait for all pods to be `Running`.
+
+4.  **Access the App**
+    Go to `http://localhost` (or your Ingress IP).
+
+---
+
+## Option 2: Docker Compose (Quick Start)
+
+This method runs the application using Docker Compose (simpler for local dev).
+
+### Steps
+
+1.  **Start Services**
+    ```bash
+    docker-compose up -d --build
+    ```
+
+2.  **Access the App**
+    - Frontend: `http://localhost:3000`
+    - Backend: `http://localhost:5000`
+
+---
+
+## Option 3: Local Development (Manual)
+
+See the legacy instructions in `README-OLD.md` (if available) or check `package.json` scripts.
+
+### Backend
 ```bash
-cd task-app
-docker-compose up -d
-```
-This will start MySQL on port 3306 with:
-- Username: `root`
-- Password: `rootpassword`
-- Database: `taskapp`
-
-### Option B: Using Local MySQL
-1. Make sure MySQL is installed and running
-2. Create the database:
-```bash
-mysql -u root -p
-CREATE DATABASE taskapp;
-exit;
-```
-3. Run the schema:
-```bash
-mysql -u root -p taskapp < backend/sql/schema.sql
-```
-
-## Step 2: Setup Backend
-
-```bash
-cd task-app/backend
+cd backend
 npm install
-```
-
-Create a `.env` file:
-```bash
-cp env.example.txt .env
-```
-
-Edit `.env` and set your database credentials:
-```
-PORT=5000
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=rootpassword
-DB_NAME=taskapp
-JWT_SECRET=my-super-secret-jwt-key-12345
-```
-
-Start the backend server:
-```bash
 npm run dev
 ```
 
-You should see: `Server is running on port 5000`
-
-## Step 3: Setup Frontend
-
-Open a **new terminal window**:
-
+### Frontend
 ```bash
-cd task-app/frontend
+cd frontend
 npm install
 npm run dev
 ```
-
-You should see: `Local: http://localhost:3000`
-
-## Step 4: Access the App
-
-Open your browser and go to: **http://localhost:3000**
-
-1. Click "Sign Up" to create an account
-2. Or click "Login" if you already have an account
-3. Start managing your tasks!
-
-## Troubleshooting
-
-### Backend won't start
-- Check if MySQL is running: `docker ps` (if using Docker)
-- Verify `.env` file has correct database credentials
-- Make sure port 5000 is not in use
-
-### Frontend won't connect to backend
-- Make sure backend is running on port 5000
-- Check browser console for errors
-- Verify CORS is enabled (it should be by default)
-
-### Database connection errors
-- Verify MySQL is running
-- Check database credentials in `.env`
-- Make sure the `taskapp` database exists
-
